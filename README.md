@@ -1,6 +1,8 @@
 # Stackoverflow answer scraper
 
-Scraper that uses google to find the top results for a question in stackoverflow and downloads the answers.
+![header](/header.PNG)
+
+Puppeteer scraper that finds top results for a stackoverflow question and screenshots every answer.
 
 ## How to run it
 
