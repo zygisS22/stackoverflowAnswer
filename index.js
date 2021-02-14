@@ -51,7 +51,6 @@ const getAnswerFromQuestion = async (website, query, page) => {
   try {
     const browser = await puppeteer.launch({
       headless: false,
-      args: ["--disable-dev-shm-usage", "--shm-size=3gb"],
     });
 
     const page = await browser.newPage();
@@ -66,9 +65,7 @@ const getAnswerFromQuestion = async (website, query, page) => {
     const queryUrl = `${query.replace(/ /g, "%20")}`;
     const googleUrl = `https://www.google.com/search?q=${queryUrl}+site%3Astackoverflow.com`;
 
-    await page.goto(googleUrl, {
-      waitUntil: "networkidle2",
-    });
+    await page.goto(googleUrl, ["load", "domcontentloaded", "networkidle0"]);
 
     const validUrls = await page.evaluate((queryUrl) => {
       const hrefElementsList = Array.from(
@@ -90,7 +87,6 @@ const getAnswerFromQuestion = async (website, query, page) => {
       return stackOverflowLinks;
     }, queryUrl);
 
-    // Likeability of keywords & order them in match
     const keywordLikeability = [];
 
     validUrls.forEach((url) => {
@@ -109,6 +105,16 @@ const getAnswerFromQuestion = async (website, query, page) => {
         });
       }
     });
+
+    /*
+
+    Order by number of matched words
+
+      keywordLikeability.sort((a, b) =>
+        b.keywordMatch > a.keywordMatch ? 1 : -1
+      );
+
+    */
 
     await createDir(FOLDER_PATH);
 
